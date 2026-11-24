@@ -1,0 +1,10 @@
+# CPU-only environment used for all experiments (Python 3.x, Windows 11)
+# Install torch from the CPU index: pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.5
+transformers>=5.0
+numpy
+matplotlib
+pyarrow
+huggingface_hub
+mpmath
+tqdm

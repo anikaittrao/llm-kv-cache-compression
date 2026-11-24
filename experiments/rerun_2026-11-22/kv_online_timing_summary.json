@@ -1,0 +1,142 @@
+{
+ "timing_summary": {
+  "K R=256 q=0": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 60.24734996026382,
+   "n": 192,
+   "rsvd_over_svd": 0.4102658125530419
+  },
+  "K R=256 q=1": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 88.42909999657422,
+   "n": 192,
+   "rsvd_over_svd": 0.6021748107984309
+  },
+  "K R=256 q=2": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 117.37910006195307,
+   "n": 192,
+   "rsvd_over_svd": 0.7993153540433517
+  },
+  "V R=512 q=0": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 140.9126499784179,
+   "n": 192,
+   "rsvd_over_svd": 0.9418038837452835
+  },
+  "V R=512 q=1": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 196.37674995465204,
+   "n": 192,
+   "rsvd_over_svd": 1.312503780270219
+  },
+  "V R=512 q=2": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 262.66364997718483,
+   "n": 192,
+   "rsvd_over_svd": 1.7555389505847248
+  }
+ },
+ "timing_summary_by_setting": {
+  "K 256 P=384": {
+   "K R=256 q=1": {
+    "svd_ms_median": 48.3076999662444,
+    "rsvd_ms_median": 57.187049998901784,
+    "n": 192,
+    "rsvd_over_svd": 1.1838081721725924
+   }
+  },
+  "KV 256/512 P=768": {
+   "K R=256 q=0": {
+    "svd_ms_median": 146.84955001575872,
+    "rsvd_ms_median": 60.24734996026382,
+    "n": 192,
+    "rsvd_over_svd": 0.4102658125530419
+   },
+   "K R=256 q=1": {
+    "svd_ms_median": 146.84955001575872,
+    "rsvd_ms_median": 88.42909999657422,
+    "n": 192,
+    "rsvd_over_svd": 0.6021748107984309
+   },
+   "K R=256 q=2": {
+    "svd_ms_median": 146.84955001575872,
+    "rsvd_ms_median": 117.37910006195307,
+    "n": 192,
+    "rsvd_over_svd": 0.7993153540433517
+   },
+   "V R=512 q=0": {
+    "svd_ms_median": 149.61994998157024,
+    "rsvd_ms_median": 140.9126499784179,
+    "n": 192,
+    "rsvd_over_svd": 0.9418038837452835
+   },
+   "V R=512 q=1": {
+    "svd_ms_median": 149.61994998157024,
+    "rsvd_ms_median": 196.37674995465204,
+    "n": 192,
+    "rsvd_over_svd": 1.312503780270219
+   },
+   "V R=512 q=2": {
+    "svd_ms_median": 149.61994998157024,
+    "rsvd_ms_median": 262.66364997718483,
+    "n": 192,
+    "rsvd_over_svd": 1.7555389505847248
+   }
+  }
+ },
+ "timing_summary_pooled_old": {
+  "K R=256 q=0": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 60.24734996026382
+  },
+  "K R=256 q=1": {
+   "svd_ms_median": 116.99120001867414,
+   "rsvd_ms_median": 78.70175002608448
+  },
+  "K R=256 q=2": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 117.37910006195307
+  },
+  "V R=512 q=0": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 140.9126499784179
+  },
+  "V R=512 q=1": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 196.37674995465204
+  },
+  "V R=512 q=2": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 262.66364997718483
+  }
+ },
+ "source": "<project>\\experiments\\results_kv_online.json",
+ "note": "timing_summary = main setting KV 256/512 P=768 only (as reported in the text); the reported JSON's 'timing_summary' pooled P=768 and P=384 for 'K R=256 q=1' (= timing_summary_pooled_old here).",
+ "reported_json_timing_summary": {
+  "K R=256 q=0": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 60.24734996026382
+  },
+  "K R=256 q=1": {
+   "svd_ms_median": 116.99120001867414,
+   "rsvd_ms_median": 78.70175002608448
+  },
+  "K R=256 q=2": {
+   "svd_ms_median": 146.84955001575872,
+   "rsvd_ms_median": 117.37910006195307
+  },
+  "V R=512 q=0": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 140.9126499784179
+  },
+  "V R=512 q=1": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 196.37674995465204
+  },
+  "V R=512 q=2": {
+   "svd_ms_median": 149.61994998157024,
+   "rsvd_ms_median": 262.66364997718483
+  }
+ }
+}

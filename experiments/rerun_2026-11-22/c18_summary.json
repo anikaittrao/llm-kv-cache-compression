@@ -1,0 +1,229 @@
+{
+ "c18a_equalcount": {
+  "from63": {
+   "steps_scored": 192,
+   "excess": {
+    "static / own only": 0.037847394073955654,
+    "static / sliding 16": 0.01119603018121862,
+    "static / sliding 32": 0.00910014466719522,
+    "static / block 16": 0.01681192394118769,
+    "static / block 32": 0.012133974176992357,
+    "static / block 64": 0.00930768120411285
+   },
+   "excess_ci": {
+    "static / own only": {
+     "point": 0.037847394073955654,
+     "ci_lo": 0.025885042065414032,
+     "ci_hi": 0.05053415291710515,
+     "windows": 16
+    },
+    "static / sliding 16": {
+     "point": 0.01119603018121862,
+     "ci_lo": 0.005927440443160403,
+     "ci_hi": 0.016748381920699322,
+     "windows": 16
+    },
+    "static / sliding 32": {
+     "point": 0.00910014466719522,
+     "ci_lo": 0.004067636176219508,
+     "ci_hi": 0.014376128089236101,
+     "windows": 16
+    },
+    "static / block 16": {
+     "point": 0.01681192394118769,
+     "ci_lo": 0.011433077760306037,
+     "ci_hi": 0.022388040530452253,
+     "windows": 16
+    },
+    "static / block 32": {
+     "point": 0.012133974176992357,
+     "ci_lo": 0.006688789817365948,
+     "ci_hi": 0.017498337141801122,
+     "windows": 16
+    },
+    "static / block 64": {
+     "point": 0.00930768120411285,
+     "ci_lo": 0.005099884314181719,
+     "ci_hi": 0.013838910291569783,
+     "windows": 16
+    }
+   },
+   "E1": {
+    "pass": true,
+    "e_sliding": 0.01119603018121862,
+    "e_block": 0.012133974176992357,
+    "difference_ci": {
+     "point": -0.0009379439957737379,
+     "ci_lo": -0.0048943248610403165,
+     "ci_hi": 0.002768266702367988,
+     "windows": 16
+    },
+    "ppl_ratio": {
+     "ratio": 0.9990733005514052,
+     "ci_lo": 0.9951750067501133,
+     "ci_hi": 1.002741005969041,
+     "windows_won": 8,
+     "windows": 16,
+     "sign_p": 1.0
+    }
+   },
+   "E2": {
+    "pass": true,
+    "e_sliding": 0.00910014466719522,
+    "e_block": 0.00930768120411285,
+    "difference_ci": {
+     "point": -0.00020753653691762963,
+     "ci_lo": -0.0029853726543248695,
+     "ci_hi": 0.0021138690383226467,
+     "windows": 16
+    },
+    "ppl_ratio": {
+     "ratio": 0.9997943773333121,
+     "ci_lo": 0.9970443699923043,
+     "ci_hi": 1.0020904502769643,
+     "windows_won": 8,
+     "windows": 16,
+     "sign_p": 1.0
+    }
+   }
+  },
+  "all": {
+   "steps_scored": 255,
+   "excess": {
+    "static / own only": 0.034676695895274,
+    "static / sliding 16": 0.00951535201488829,
+    "static / sliding 32": 0.00773046416898282,
+    "static / block 16": 0.015497530099057188,
+    "static / block 32": 0.01089501787029401,
+    "static / block 64": 0.007921362425360456
+   },
+   "excess_ci": {
+    "static / own only": {
+     "point": 0.034676695895274,
+     "ci_lo": 0.02399840328310806,
+     "ci_hi": 0.045782358712529087,
+     "windows": 16
+    },
+    "static / sliding 16": {
+     "point": 0.00951535201488829,
+     "ci_lo": 0.004860525934944732,
+     "ci_hi": 0.014116542413796299,
+     "windows": 16
+    },
+    "static / sliding 32": {
+     "point": 0.00773046416898282,
+     "ci_lo": 0.003707519936874826,
+     "ci_hi": 0.011757795657453034,
+     "windows": 16
+    },
+    "static / block 16": {
+     "point": 0.015497530099057188,
+     "ci_lo": 0.011257264584585775,
+     "ci_hi": 0.019838377036316045,
+     "windows": 16
+    },
+    "static / block 32": {
+     "point": 0.01089501787029401,
+     "ci_lo": 0.006347298349319641,
+     "ci_hi": 0.015226748535488608,
+     "windows": 16
+    },
+    "static / block 64": {
+     "point": 0.007921362425360456,
+     "ci_lo": 0.004585381712592024,
+     "ci_hi": 0.011368413683183478,
+     "windows": 16
+    }
+   },
+   "E1": {
+    "pass": true,
+    "e_sliding": 0.00951535201488829,
+    "e_block": 0.01089501787029401,
+    "difference_ci": {
+     "point": -0.0013796658554057206,
+     "ci_lo": -0.0047482089423522,
+     "ci_hi": 0.001801274498616228,
+     "windows": 16
+    },
+    "ppl_ratio": {
+     "ratio": 0.998635203625484,
+     "ci_lo": 0.9953115347696043,
+     "ci_hi": 1.0017856393590523,
+     "windows_won": 8,
+     "windows": 16,
+     "sign_p": 1.0
+    }
+   },
+   "E2": {
+    "pass": true,
+    "e_sliding": 0.00773046416898282,
+    "e_block": 0.007921362425360456,
+    "difference_ci": {
+     "point": -0.00019089825637763624,
+     "ci_lo": -0.0022206849697405328,
+     "ci_hi": 0.0015236503443020796,
+     "windows": 16
+    },
+    "ppl_ratio": {
+     "ratio": 0.9998106020335573,
+     "ci_lo": 0.9977929188819037,
+     "ci_hi": 1.0015107114781496,
+     "windows_won": 9,
+     "windows": 16,
+     "sign_p": 0.803619384765625
+    }
+   }
+  }
+ },
+ "E1_primary": true,
+ "E2_primary": true,
+ "Z3": {
+  "excess_from63": {
+   "static / own only": 0.037847394073955654,
+   "static / sliding 32": 0.00910014466719522,
+   "lagged 31 + own": 0.033697126376971864,
+   "random old 31 + own": 0.03694339586246209
+  },
+  "threshold_h": 0.023473769370575437,
+  "Z3_pass": false,
+  "random_old_le_h": false,
+  "lagged_minus_h_ci": {
+   "point": 0.010223357006396427,
+   "ci_lo": 0.0019929532504604414,
+   "ci_hi": 0.018755329435815968,
+   "windows": 16
+  },
+  "check_own_only_control_vs_equalcount_max_abs_step_diff": 0.0
+ },
+ "N4": {
+  "K": {
+   "heldout_contig": 3.2085479812544424,
+   "heldout_inter": 1.7157660489778808,
+   "cont_contig": 4.267694547852468,
+   "cont_inter": 2.1901499837372302,
+   "rel_diff_heldout": -0.4652515533499768,
+   "paired_diff_median_5_95": [
+    -1.508603677647331,
+    -5.856528428858387,
+    -1.0454265028611704
+   ]
+  },
+  "V": {
+   "heldout_contig": 5.598588984494588,
+   "heldout_inter": 4.107883564076504,
+   "cont_contig": 5.878210067752702,
+   "cont_inter": 4.751714533480081,
+   "rel_diff_heldout": -0.26626448638159095,
+   "paired_diff_median_5_95": [
+    -1.5757436087152126,
+    -21.134720296539893,
+    -0.20315057304960288
+   ]
+  },
+  "N4_pass": false,
+  "direction": {
+   "K": "interleaved smaller by >25% (drift contributes)",
+   "V": "interleaved smaller by >25% (drift contributes)"
+  }
+ }
+}

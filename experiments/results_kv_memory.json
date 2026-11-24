@@ -1,0 +1,568 @@
+{
+ "description": "C0 (audit 2026-11-22): memory of a factored KV cache including the per-sequence basis (Prop 2.2 of the audit plan).\n\nRun:  .venv\\Scripts\\python.exe experiments\\kv_memory.py        (seconds; no model, no data)\nWrites experiments/results_kv_memory.json. Pure arithmetic, plus a cross-check that counts the arrays the experiment\ncode actually builds (kv_update.py / kv_buffer.py state: mu, G^{1/2}, G^{-1/2}, U, S) for one layer.",
+ "d": 768,
+ "H": 12,
+ "d_h": 64,
+ "layers": 12,
+ "T_values": [
+  "1024",
+  "2048",
+  "8192",
+  "inf"
+ ],
+ "settings": {
+  "offline per-layer K256/V512 (Sec 5.5), no exact token": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 0,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "shared calibration basis",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.5,
+    "2048": 0.5,
+    "8192": 0.5,
+    "inf": 0.5
+   },
+   "T_star": 0.0,
+   "model_constant_numbers": 7686144,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 18.0
+   }
+  },
+  "offline per-layer K256/V512, first token exact": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 1,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "keep0 variant",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.50048828125,
+    "2048": 0.500244140625,
+    "8192": 0.50006103515625,
+    "inf": 0.5
+   },
+   "T_star": 1.0,
+   "model_constant_numbers": 7686144,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 18.017578125
+   }
+  },
+  "offline K256/V512 + buffer 32 (Sec 8 offline rows)": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 33,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.51611328125,
+    "2048": 0.508056640625,
+    "8192": 0.50201416015625,
+    "inf": 0.5
+   },
+   "T_star": 33.0,
+   "model_constant_numbers": 7686144,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 18.580078125
+   }
+  },
+  "online/static K256/V512, no buffer (Sec 6)": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 1,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "prompt basis, prompt G_K",
+   "M_numbers_per_layer": 641280,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.908203125,
+    "2048": 0.7041015625,
+    "8192": 0.551025390625,
+    "inf": 0.5
+   },
+   "T_star": 836.0,
+   "variant_nG_both_halves": {
+    "M": 690432,
+    "rho_1024": 0.939453125,
+    "T_star": 900.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.001953125,
+    "T_star": 1028.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 32.6953125
+   }
+  },
+  "online/static K256/V512, buffer 32": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 33,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "",
+   "M_numbers_per_layer": 641280,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.923828125,
+    "2048": 0.7119140625,
+    "8192": 0.552978515625,
+    "inf": 0.5
+   },
+   "T_star": 868.0,
+   "variant_nG_both_halves": {
+    "M": 690432,
+    "rho_1024": 0.955078125,
+    "T_star": 932.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.017578125,
+    "T_star": 1060.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 33.2578125
+   }
+  },
+  "update K256/V512, buffer 32 (Sec 8 main)": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 33,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "update/no buffer has the same memory",
+   "M_numbers_per_layer": 641280,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.923828125,
+    "2048": 0.7119140625,
+    "8192": 0.552978515625,
+    "inf": 0.5
+   },
+   "T_star": 868.0,
+   "variant_nG_both_halves": {
+    "M": 690432,
+    "rho_1024": 0.955078125,
+    "T_star": 932.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.017578125,
+    "T_star": 1060.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 33.2578125
+   }
+  },
+  "update K256/V512, buffer 32, G_K shared": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 33,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": false,
+   "note": "variant: calibration G_K",
+   "M_numbers_per_layer": 592128,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.892578125,
+    "2048": 0.6962890625,
+    "8192": 0.549072265625,
+    "inf": 0.5
+   },
+   "T_star": 804.0,
+   "variant_nG_both_halves": {
+    "M": 592128,
+    "rho_1024": 0.892578125,
+    "T_star": 804.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.017578125,
+    "T_star": 1060.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 32.1328125
+   }
+  },
+  "online/static K256/V512, no buffer, G_K shared": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 1,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": false,
+   "note": "variant",
+   "M_numbers_per_layer": 592128,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.876953125,
+    "2048": 0.6884765625,
+    "8192": 0.547119140625,
+    "inf": 0.5
+   },
+   "T_star": 772.0,
+   "variant_nG_both_halves": {
+    "M": 592128,
+    "rho_1024": 0.876953125,
+    "T_star": 772.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.001953125,
+    "T_star": 1028.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 31.5703125
+   }
+  },
+  "brand every 64 (all rows) K256/V512": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 65,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "exact-row stash up to 64",
+   "M_numbers_per_layer": 641280,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.939453125,
+    "2048": 0.7197265625,
+    "8192": 0.554931640625,
+    "inf": 0.5
+   },
+   "T_star": 900.0,
+   "variant_nG_both_halves": {
+    "M": 690432,
+    "rho_1024": 0.970703125,
+    "T_star": 964.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.033203125,
+    "T_star": 1092.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 33.8203125
+   }
+  },
+  "brand every 128 (all rows) K256/V512": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 129,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "exact-row stash up to 128",
+   "M_numbers_per_layer": 641280,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.970703125,
+    "2048": 0.7353515625,
+    "8192": 0.558837890625,
+    "inf": 0.5
+   },
+   "T_star": 964.0,
+   "variant_nG_both_halves": {
+    "M": 690432,
+    "rho_1024": 1.001953125,
+    "T_star": 1028.0
+   },
+   "variant_folded": {
+    "M": 788736,
+    "rho_1024": 1.064453125,
+    "T_star": 1156.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 34.9453125
+   }
+  },
+  "online third K128/V384, no buffer": {
+   "R_K": 128,
+   "R_V": 384,
+   "n_exact": 1,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "",
+   "M_numbers_per_layer": 444416,
+   "rho0": 0.3333333333333333,
+   "rho": {
+    "1024": 0.6165364583333334,
+    "2048": 0.4749348958333333,
+    "8192": 0.3687337239583333,
+    "inf": 0.3333333333333333
+   },
+   "T_star": 435.0,
+   "variant_nG_both_halves": {
+    "M": 493568,
+    "rho_1024": 0.6477864583333334,
+    "T_star": 483.0
+   },
+   "variant_folded": {
+    "M": 493568,
+    "rho_1024": 0.6477864583333334,
+    "T_star": 483.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 22.1953125
+   }
+  },
+  "online third K128/V384, buffer 32": {
+   "R_K": 128,
+   "R_V": 384,
+   "n_exact": 33,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "",
+   "M_numbers_per_layer": 444416,
+   "rho0": 0.3333333333333333,
+   "rho": {
+    "1024": 0.6373697916666666,
+    "2048": 0.4853515625,
+    "8192": 0.371337890625,
+    "inf": 0.3333333333333333
+   },
+   "T_star": 467.0,
+   "variant_nG_both_halves": {
+    "M": 493568,
+    "rho_1024": 0.6686197916666666,
+    "T_star": 515.0
+   },
+   "variant_folded": {
+    "M": 493568,
+    "rho_1024": 0.6686197916666666,
+    "T_star": 515.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 22.9453125
+   }
+  },
+  "offline third K128/V384, no buffer": {
+   "R_K": 128,
+   "R_V": 384,
+   "n_exact": 1,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.3333333333333333,
+   "rho": {
+    "1024": 0.333984375,
+    "2048": 0.3336588541666667,
+    "8192": 0.3334147135416667,
+    "inf": 0.3333333333333333
+   },
+   "T_star": 1.0,
+   "model_constant_numbers": 5326848,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 12.0234375
+   }
+  },
+  "online keys only K256, no buffer (P=384/512/768)": {
+   "R_K": 256,
+   "R_V": 768,
+   "n_exact": 1,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "values full",
+   "M_numbers_per_layer": 246784,
+   "rho0": 0.6666666666666666,
+   "rho": {
+    "1024": 0.8238932291666666,
+    "2048": 0.7452799479166666,
+    "8192": 0.6863199869791666,
+    "inf": 0.6666666666666666
+   },
+   "T_star": 483.0,
+   "variant_nG_both_halves": {
+    "M": 295936,
+    "rho_1024": 0.8551432291666666,
+    "T_star": 579.0
+   },
+   "variant_folded": {
+    "M": 394240,
+    "rho_1024": 0.9176432291666666,
+    "T_star": 771.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 29.66015625
+   }
+  },
+  "online keys only K256, buffer 32": {
+   "R_K": 256,
+   "R_V": 768,
+   "n_exact": 33,
+   "per_sequence_basis": true,
+   "per_sequence_G_K": true,
+   "note": "",
+   "M_numbers_per_layer": 246784,
+   "rho0": 0.6666666666666666,
+   "rho": {
+    "1024": 0.8343098958333334,
+    "2048": 0.75048828125,
+    "8192": 0.6876220703125,
+    "inf": 0.6666666666666666
+   },
+   "T_star": 515.0,
+   "variant_nG_both_halves": {
+    "M": 295936,
+    "rho_1024": 0.8655598958333334,
+    "T_star": 611.0
+   },
+   "variant_folded": {
+    "M": 394240,
+    "rho_1024": 0.9280598958333334,
+    "T_star": 803.0
+   },
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 30.03515625
+   }
+  },
+  "offline keys only K256, no buffer": {
+   "R_K": 256,
+   "R_V": 768,
+   "n_exact": 1,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.6666666666666666,
+   "rho": {
+    "1024": 0.6669921875,
+    "2048": 0.6668294270833334,
+    "8192": 0.6667073567708334,
+    "inf": 0.6666666666666666
+   },
+   "T_star": 1.0,
+   "model_constant_numbers": 2958336,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 24.01171875
+   }
+  },
+  "offline per-head keys r=32 (Option 1), keep0": {
+   "R_K": 384,
+   "R_V": 768,
+   "n_exact": 1,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "per-head codes 32/64",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.75,
+   "rho": {
+    "1024": 0.750244140625,
+    "2048": 0.7501220703125,
+    "8192": 0.750030517578125,
+    "inf": 0.75
+   },
+   "T_star": 1.0,
+   "model_constant_numbers": 4137984,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 27.0087890625
+   }
+  },
+  "offline groups g (any g) half cache": {
+   "R_K": 256,
+   "R_V": 512,
+   "n_exact": 0,
+   "per_sequence_basis": false,
+   "per_sequence_G_K": false,
+   "note": "arithmetic differs, memory does not",
+   "M_numbers_per_layer": 0,
+   "rho0": 0.5,
+   "rho": {
+    "1024": 0.5,
+    "2048": 0.5,
+    "8192": 0.5,
+    "inf": 0.5
+   },
+   "T_star": 0.0,
+   "model_constant_numbers": 7686144,
+   "MB_fp16_12_layers_T1024": {
+    "full": 36.0,
+    "factored": 18.0
+   }
+  }
+ },
+ "code_count_main_K256_V512_P768": {
+  "arrays": {
+   "K": {
+    "mu": 768,
+    "U": 196608,
+    "S": 256,
+    "T_dense_both": 1179648,
+    "T_half_nonzeros": 49152,
+    "codes_per_token": 256
+   },
+   "V": {
+    "mu": 768,
+    "U": 393216,
+    "S": 512,
+    "T_dense_both": 1179648,
+    "T_half_nonzeros": 589824,
+    "codes_per_token": 512
+   }
+  },
+  "minimal_side_info": 641280,
+  "as_implemented_side_info_incl_dense_G_matrices": 2951424,
+  "formula_M": 641280,
+  "formula_matches_count": true
+ },
+ "code_count_third_K128_V384_P768": {
+  "arrays": {
+   "K": {
+    "mu": 768,
+    "U": 98304,
+    "S": 128,
+    "T_dense_both": 1179648,
+    "T_half_nonzeros": 49152,
+    "codes_per_token": 128
+   },
+   "V": {
+    "mu": 768,
+    "U": 294912,
+    "S": 384,
+    "T_dense_both": 1179648,
+    "T_half_nonzeros": 589824,
+    "codes_per_token": 384
+   }
+  },
+  "minimal_side_info": 444416,
+  "as_implemented_side_info_incl_dense_G_matrices": 2754560,
+  "formula_M": 444416,
+  "formula_matches_count": true
+ },
+ "headline": {
+  "half_cache_online_T1024": 0.908203125,
+  "half_cache_online_buffer32_T1024": 0.923828125,
+  "half_cache_T_star": 836.0,
+  "half_cache_buffer32_T_star": 868.0,
+  "half_cache_G_K_shared_T1024": 0.876953125,
+  "third_online_T1024": 0.6165364583333334,
+  "keys_only_online_T1024": 0.8238932291666666,
+  "offline_half_buffer32_T1024": 0.51611328125
+ }
+}

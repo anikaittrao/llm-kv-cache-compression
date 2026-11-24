@@ -1,0 +1,128 @@
+{
+ "windows": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ],
+ "n_windows": {
+  "dense": 16,
+  "static / no buffer": 16,
+  "static / buffer 32": 16,
+  "update / no buffer": 16,
+  "update / buffer 32": 16,
+  "attn-late / no buffer": 16,
+  "attn-late / buffer 32": 16,
+  "attn-late+update / no buffer": 16,
+  "attn-late+update / buffer 32": 16
+ },
+ "ppl": {
+  "dense": 13.176125155966316,
+  "static / no buffer": 15.16481365529795,
+  "static / buffer 32": 13.868494868229007,
+  "update / no buffer": 14.96677836950168,
+  "update / buffer 32": 13.783899902395921,
+  "attn-late / no buffer": 14.678980276687643,
+  "attn-late / buffer 32": 13.406855313384737,
+  "attn-late+update / no buffer": 14.318118948864594,
+  "attn-late+update / buffer 32": 13.30499056504701
+ },
+ "excess": {
+  "dense": 0.0,
+  "static / no buffer": 0.15093120897012202,
+  "static / buffer 32": 0.05254729323432206,
+  "update / no buffer": 0.13590135129556913,
+  "update / buffer 32": 0.04612697126320153,
+  "attn-late / no buffer": 0.11405895913494835,
+  "attn-late / buffer 32": 0.017511229947139828,
+  "attn-late+update / no buffer": 0.08667144394732529,
+  "attn-late+update / buffer 32": 0.009780220478730284
+ },
+ "cis": {
+  "update/buf vs static/buf": {
+   "ratio": 0.9939002057081997,
+   "ci_lo": 0.9921361809222498,
+   "ci_hi": 0.9956349407941747,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  },
+  "attn-late/buf vs update/buf": {
+   "ratio": 0.9726460151567373,
+   "ci_lo": 0.9665016269744765,
+   "ci_hi": 0.9784374638216627,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  },
+  "attn-late/buf vs static/buf": {
+   "ratio": 0.9667130745455419,
+   "ci_lo": 0.9605987978040997,
+   "ci_hi": 0.9724809046378338,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  },
+  "attn-late/nobuf vs static/nobuf": {
+   "ratio": 0.9679631158249961,
+   "ci_lo": 0.9604208932120875,
+   "ci_hi": 0.9748742363665222,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  },
+  "attn-late+update/buf vs attn-late/buf": {
+   "ratio": 0.9924020401535899,
+   "ci_lo": 0.9902826300771298,
+   "ci_hi": 0.9942237310687906,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  },
+  "attn-late+update/buf vs update/buf": {
+   "ratio": 0.9652558897888057,
+   "ci_lo": 0.958822116187985,
+   "ci_hi": 0.9716881622606649,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  },
+  "attn-late+update/nobuf vs attn-late/nobuf": {
+   "ratio": 0.9754164580222136,
+   "ci_lo": 0.9704126854795307,
+   "ci_hi": 0.9801326570627071,
+   "windows": 16,
+   "windows_won": 16,
+   "ties": 0,
+   "sign_p": 3.0517578125e-05
+  }
+ },
+ "decision": {
+  "Q1r_update_buf_le_0.5pct": false,
+  "Q2r_order": true,
+  "Q3r_CI_below_1": true,
+  "W1r": true,
+  "W3r": true,
+  "A1r": true,
+  "A2r": true
+ },
+ "dense_check_c11_vs_c13a_max_abs_nll_diff": 0.0001976071398530621
+}

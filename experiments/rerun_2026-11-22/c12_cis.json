@@ -1,0 +1,57 @@
+{
+ "lagged 31 + own vs own only (B=1)": {
+  "ratio": 0.9967148823290888,
+  "ci_lo": 0.9930810844895924,
+  "ci_hi": 0.9996016455633384,
+  "windows": 16,
+  "windows_won": 10,
+  "ties": 0,
+  "sign_p": 0.454498291015625
+ },
+ "lagged 31 + own vs sliding 32": {
+  "ratio": 1.0233667149705115,
+  "ci_lo": 1.0121569933731396,
+  "ci_hi": 1.0355176141136104,
+  "windows": 16,
+  "windows_won": 3,
+  "ties": 0,
+  "sign_p": 0.021270751953125
+ },
+ "lagged 31 + own vs random prompt 31 + own": {
+  "ratio": 0.9966543780880077,
+  "ci_lo": 0.9930224791197564,
+  "ci_hi": 0.9995177948510633,
+  "windows": 16,
+  "windows_won": 11,
+  "ties": 0,
+  "sign_p": 0.210113525390625
+ },
+ "random old 31 + own vs own only (B=1)": {
+  "ratio": 0.9990707720624664,
+  "ci_lo": 0.9976405257878959,
+  "ci_hi": 1.0006010838380797,
+  "windows": 16,
+  "windows_won": 10,
+  "ties": 0,
+  "sign_p": 0.454498291015625
+ },
+ "random old 31 + own vs sliding 32": {
+  "ratio": 1.0257856004311616,
+  "ci_lo": 1.0163200502191945,
+  "ci_hi": 1.0365051538806342,
+  "windows": 16,
+  "windows_won": 0,
+  "ties": 0,
+  "sign_p": 3.0517578125e-05
+ },
+ "random old 31 + own vs random prompt 31 + own": {
+  "ratio": 0.9990101248102565,
+  "ci_lo": 0.9976013361972703,
+  "ci_hi": 1.000457611008162,
+  "windows": 16,
+  "windows_won": 9,
+  "ties": 0,
+  "sign_p": 0.803619384765625
+ },
+ "check own-only vs c2 B=1 max |nll diff|": 0.00028591909710939944
+}

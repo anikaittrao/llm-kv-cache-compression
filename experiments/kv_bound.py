@@ -1,0 +1,273 @@
+"""Step 7 (2026-11-19): a bound on the attention output, checked on GPT-2.
+
+Run:  .venv\\Scripts\\python.exe experiments\\kv_bound.py            (about 35 min)
+      .venv\\Scripts\\python.exe experiments\\kv_bound.py --replot
+Writes experiments/results_kv_bound.json and figures/fig15_kv_bound.{pdf,png}.
+
+Theory (report.pdf Section 10). One head, one query. Scores s_i = q.k_i/8, a = softmax(s), output o = sum_i a_i v_i.
+With the compressed cache: s^_i, a^, o^. Score error d_i = s^_i - s_i, osc(d) = max d - min d.
+  Lemma      ||a^ - a||_1 <= osc(d)/2                                   (constant 1/2 is sharp)
+  Prop.      ||(o^ - o)W|| <= 1/2 ||a^ - a||_1 diam_W{v_i} + sum_i a^_i ||(v^_i - v_i)W||      (level 1)
+                          <= 1/4 osc(d) diam_W{v_i} + max_i ||(v^_i - v_i)W||                   (level 2)
+  Cor.       with the weighted residual rows e_i = (x_i - mu) G^{1/2}(I - U U^T) (the rows whose Frobenius
+             norm the SVD / RSVD minimizes; Thm 5.5 of background.pdf bounds their expected size on the prompt):
+             ||(o^ - o)W|| <= 1/2 gamma_h(q) diam_W max_i ||e^K_i|| + beta_h max_i ||e^V_i||     (level 3)
+             gamma_h(q) = ||G_K^{-1/2}[:, head h] q_h|| / 8,  beta_h = || G_V^{-1/2}[:, head h] W_O^h ||_2.
+W = W_O^h (the head's 64 x 768 block of attn.c_proj), so errors are measured in the layer's output space.
+
+Setting: the online-basis setting of kv_online.py (prompt P = 768, continuation 256 queries, one basis per layer,
+query-aware keys, output-aware values, centered, first token exact) with the bases offline / online / rsvd q=0,1,2
+(same seeds as kv_online.py), at half (K256/V512) and a third (K128/V384) of the cache. One layer at a time: the
+exact model's q, k, v of each layer are taken, that layer's cache is compressed, and its attention is recomputed
+(the theory is about one attention operation; errors passed on from earlier layers are not included).
+
+Rules fixed before the run:
+  B1 correctness : the Lemma and levels 1-3 hold for every (window, layer, head, query, setting, method)
+                   (they are theorems; a violation beyond 1e-9 relative means a bug).
+  B2 usefulness  : the level-2 bound is within 10x of the actual error (median ratio actual / bound >= 0.1).
+  B3 ranking     : over the 10 (setting, method) pairs, the Spearman correlation between the mean level-2 bound
+                   (summed over layers and heads) and the continuation perplexity from results_kv_online.json is >= 0.8.
+Also reported: the first-order softmax term sum_i a_i |d_i - mean_a(d)| against ||a^ - a||_1; how loose
+max_i ||e_i|| <= ||E||_F is on the prompt rows; and residual rows of continuation tokens vs prompt tokens (Thm 5.5
+covers only the prompt rows the basis was computed from).
+"""
+import argparse, json, math, os, sys, time
+import numpy as np
+import torch
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from kv_online import load_wikitext, psd_pow, qblock, rsvd_right, ROOT, D64, L, H, E, Dh  # noqa: E402
+
+SETTINGS = [('half', 256, 512), ('third', 128, 384)]
+METHODS = ['offline', 'online', 'rsvd q=0', 'rsvd q=1', 'rsvd q=2']
+PPL_KEY = {'half': 'KV 256/512 P=768', 'third': 'KV 128/384 P=768'}
+
+
+def spearman(x, y):
+    rx, ry = np.argsort(np.argsort(x)), np.argsort(np.argsort(y))
+    return float(np.corrcoef(rx, ry)[0, 1])
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--windows', type=int, default=16)
+    ap.add_argument('--P', type=int, default=768)
+    ap.add_argument('--p', type=int, default=10)
+    ap.add_argument('--threads', type=int, default=4)
+    ap.add_argument('--figdir', default=os.path.join(ROOT, 'figures'))
+    ap.add_argument('--out', default=os.path.join(ROOT, 'experiments', 'results_kv_bound.json'))
+    ap.add_argument('--online_json', default=os.path.join(ROOT, 'experiments', 'results_kv_online.json'))
+    ap.add_argument('--replot', action='store_true')
+    a = ap.parse_args()
+    if a.replot:
+        with open(a.out) as f:
+            make_figures(a, json.load(f))
+        print('figures regenerated'); return
+    torch.set_num_threads(a.threads)
+    T0 = time.perf_counter()
+    from transformers import GPT2LMHeadModel, GPT2TokenizerFast
+    tok = GPT2TokenizerFast.from_pretrained('gpt2')
+    model = GPT2LMHeadModel.from_pretrained('gpt2').eval()
+    ids_test = tok(load_wikitext('test'), return_tensors='pt').input_ids[0]
+    ids_train = tok(load_wikitext('train'), return_tensors='pt').input_ids[0]
+    seq, P = 1024, a.P
+    WO = [model.transformer.h[l].attn.c_proj.weight.detach().to(D64) for l in range(L)]
+    TV = [(psd_pow(WO[l] @ WO[l].T, 0.5), psd_pow(WO[l] @ WO[l].T, -0.5)) for l in range(L)]
+    WOh = [[WO[l][h * Dh:(h + 1) * Dh] for h in range(H)] for l in range(L)]  # 64 x 768 blocks
+    beta = [[float(torch.linalg.matrix_norm(TV[l][1][:, h * Dh:(h + 1) * Dh] @ WOh[l][h], 2)) for h in range(H)] for l in range(L)]
+
+    cap = {}
+    hooks = [model.transformer.h[l].attn.c_attn.register_forward_hook(lambda m, a_, o, l=l: cap.__setitem__(l, o[0].detach()))
+             for l in range(L)]
+    # offline statistics: identical to kv_online.py
+    g = torch.Generator().manual_seed(0)
+    starts = torch.randint(0, ids_train.numel() - seq, (16,), generator=g).tolist()
+    S1 = {k: [torch.zeros(E, dtype=D64) for _ in range(L)] for k in 'QKV'}
+    S2 = {k: [torch.zeros(E, E, dtype=D64) for _ in range(L)] for k in 'QKV'}
+    with torch.inference_mode():
+        for s in starts:
+            model(ids_train[s:s + seq][None])
+            for l in range(L):
+                X = cap[l].to(D64)
+                for i, k in enumerate('QKV'):
+                    Xi = X[:, i * E:(i + 1) * E]; S1[k][l] += Xi.sum(0); S2[k][l] += Xi.T @ Xi
+    n = 16 * seq
+    off = {}
+    for l in range(L):
+        muK, muV = S1['K'][l] / n, S1['V'][l] / n
+        CK = S2['K'][l] / n - torch.outer(muK, muK); CV = S2['V'][l] / n - torch.outer(muV, muV)
+        GK = qblock(S2['Q'][l] / n); TK = (psd_pow(GK, 0.5), psd_pow(GK, -0.5))
+        UK = torch.linalg.eigh(TK[0] @ CK @ TK[0])[1].flip(1)
+        UV = torch.linalg.eigh(TV[l][0] @ CV @ TV[l][0])[1].flip(1)
+        off[l] = {'K': (muK, TK, UK), 'V': (muV, TV[l], UV)}
+    print(f'offline bases ready ({time.perf_counter()-T0:.0f}s)', flush=True)
+
+    tri = torch.ones(seq, seq, dtype=torch.bool).tril()
+    acc = {}          # (setting, method) -> lists
+    viol = {'lemma': 0.0, 'L1': 0.0, 'L2': 0.0, 'L3': 0.0}
+    frob = []         # (kind, R, method) max-row / Frobenius on prompt rows, continuation/prompt rms rows
+
+    for wi in range(a.windows):
+        w = ids_test[wi * seq:(wi + 1) * seq]
+        with torch.inference_mode():
+            model(w[None])
+        for l in range(L):
+            X = cap[l].to(D64)
+            Xq, Xk, Xv = X[:, :E], X[:, E:2 * E], X[:, 2 * E:]
+            # exact attention for the continuation queries, all heads at once
+            q = Xq[P:].reshape(seq - P, H, Dh).transpose(0, 1)              # H x Tq x 64
+            k = Xk.reshape(seq, H, Dh).transpose(0, 1)                       # H x T x 64
+            v = Xv.reshape(seq, H, Dh).transpose(0, 1)
+            mask = tri[P:]                                                   # Tq x T
+            s = (q @ k.transpose(1, 2)) / 8.0
+            s = s.masked_fill(~mask, float('-inf'))
+            att = torch.softmax(s, -1)
+            vW = torch.stack([v[h] @ WOh[l][h] for h in range(H)])           # H x T x 768
+            o = att @ vW                                                     # H x Tq x 768
+            # prefix diameters of {v_i W_O^h}, i <= t
+            diam = torch.empty(H, seq - P, dtype=D64)
+            for h in range(H):
+                Dm = torch.cdist(vW[h], vW[h])
+                Dm = Dm.masked_fill(~tri, 0).amax(1).cummax(0).values      # diam of {0..t}
+                diam[h] = Dm[P:]
+            # prompt-derived online statistics (positions 1..P-1, as kv_online.py)
+            pq, pk, pv = Xq[1:P], Xk[1:P], Xv[1:P]
+            GKon = qblock(pq.T @ pq / pq.shape[0]); TKon = (psd_pow(GKon, 0.5), psd_pow(GKon, -0.5))
+            onl = {}
+            for kind, Xr, T in (('K', pk, TKon), ('V', pv, TV[l])):
+                mu = Xr.mean(0); A = (Xr - mu) @ T[0]
+                U = torch.linalg.svd(A, full_matrices=False)[2].T
+                onl[kind] = (mu, T, U, A)
+            for sname, RK, RV in SETTINGS:
+                for m in METHODS:
+                    parts = {}
+                    for kind, R, Xfull in (('K', RK, Xk), ('V', RV, Xv)):
+                        if m == 'offline':
+                            mu, T, U = off[l][kind]; Ur = U[:, :R]
+                        else:
+                            mu, T, U, A = onl[kind]
+                            if m == 'online':
+                                Ur = U[:, :R]
+                            else:
+                                qq = int(m[-1])
+                                gen = torch.Generator().manual_seed(1000 * wi + 10 * l + (0 if kind == 'K' else 1) + 100000 * qq)
+                                Ur = rsvd_right(A, R, a.p, qq, gen)[0]
+                        Ew = (Xfull - mu) @ T[0]
+                        e = Ew - (Ew @ Ur) @ Ur.T                                  # weighted residual rows
+                        e[0] = 0                                                   # first token exact
+                        xhat = Xfull - e @ T[1]
+                        parts[kind] = (xhat, e, T)
+                        en = e.norm(dim=1)
+                        frob.append({'setting': sname, 'method': m, 'kind': kind,
+                                     'max_over_frob_prompt': float(en[:P].max() / en[:P].norm()),
+                                     'cont_over_prompt_rms': float(en[P:].pow(2).mean().sqrt() / en[1:P].pow(2).mean().sqrt())})
+                    kh = parts['K'][0].reshape(seq, H, Dh).transpose(0, 1)
+                    vh = parts['V'][0].reshape(seq, H, Dh).transpose(0, 1)
+                    sh = ((q @ kh.transpose(1, 2)) / 8.0).masked_fill(~mask, float('-inf'))
+                    ah = torch.softmax(sh, -1)
+                    vWh = torch.stack([vh[h] @ WOh[l][h] for h in range(H)])
+                    oh = ah @ vWh
+                    err = (oh - o).norm(dim=-1)                                    # H x Tq
+                    d = (sh - s).masked_fill(~mask, 0.0)
+                    dmax = d.masked_fill(~mask, float('-inf')).amax(-1); dmin = d.masked_fill(~mask, float('inf')).amin(-1)
+                    osc = dmax - dmin
+                    tv = (ah - att).abs().sum(-1)
+                    dbar = (att * d).sum(-1, keepdim=True)
+                    fo = (att * (d - dbar).abs()).sum(-1)
+                    verr = (vWh - vW).norm(dim=-1)                                 # H x T
+                    vavg = (ah * verr[:, None, :]).sum(-1)                         # sum_i a^_i ||...||
+                    vmax = verr[:, None, :].masked_fill(~mask[None], 0).amax(-1)  # H x Tq: max_{i<=t}
+                    L1 = 0.5 * tv * diam + vavg
+                    L2 = 0.25 * osc * diam + vmax
+                    # level 3
+                    eK, eV = parts['K'][1].norm(dim=1), parts['V'][1].norm(dim=1)
+                    eKmax = eK[None, :].masked_fill(~mask, 0).amax(-1)                       # Tq
+                    eVmax = eV[None, :].masked_fill(~mask, 0).amax(-1)
+                    T1K = parts['K'][2][1]
+                    gam = torch.stack([(q[h] @ T1K[:, h * Dh:(h + 1) * Dh].T).norm(dim=-1) / 8.0 for h in range(H)])  # H x Tq
+                    bet = torch.tensor(beta[l], dtype=D64)[:, None]
+                    L3 = 0.5 * gam * diam * eKmax[None] + bet * eVmax[None]
+                    scale = err.abs().max() + 1e-12
+                    viol['lemma'] = max(viol['lemma'], float((tv - 0.5 * osc).max() / (tv.max() + 1e-12)))
+                    viol['L1'] = max(viol['L1'], float((err - L1).max() / scale))
+                    viol['L2'] = max(viol['L2'], float((err - L2).max() / scale))
+                    viol['L3'] = max(viol['L3'], float((err - L3).max() / scale))
+                    r = acc.setdefault((sname, m), {k_: [] for k_ in ('err', 'L1', 'L2', 'L3', 'tv', 'osc', 'fo', 'r1', 'r2', 'r3', 'rlem', 'rfo')})
+                    r['err'].append(float(err.mean())); r['L1'].append(float(L1.mean()))
+                    r['L2'].append(float(L2.mean())); r['L3'].append(float(L3.mean()))
+                    r['tv'].append(float(tv.mean())); r['osc'].append(float(osc.mean())); r['fo'].append(float(fo.mean()))
+                    sub = lambda t_: t_.flatten()[::7].tolist()  # thinned per-query samples for the tightness plots
+                    r['r1'] += sub(err / L1); r['r2'] += sub(err / L2); r['r3'] += sub(err / L3)
+                    r['rlem'] += sub(tv / (0.5 * osc).clamp_min(1e-300)); r['rfo'] += sub(tv / fo.clamp_min(1e-300))
+        print(f'window {wi+1}/{a.windows} done ({time.perf_counter()-T0:.0f}s)  max violations {viol}', flush=True)
+    for h_ in hooks:
+        h_.remove()
+
+    with open(a.online_json) as f:
+        ppl = json.load(f)['settings']
+    rows = []
+    for (sname, m), r in acc.items():
+        rows.append({'setting': sname, 'method': m, 'ppl': ppl[PPL_KEY[sname]]['ppl'][m],
+                     'err_mean': 144 * float(np.mean(r['err'])),        # summed over heads and layers (mean x 144)
+                     'L1_mean': 144 * float(np.mean(r['L1'])), 'L2_mean': 144 * float(np.mean(r['L2'])),
+                     'L3_mean': 144 * float(np.mean(r['L3'])),
+                     'tv_mean': float(np.mean(r['tv'])), 'osc_mean': float(np.mean(r['osc'])), 'fo_mean': float(np.mean(r['fo'])),
+                     'ratio_L1_median': float(np.median(r['r1'])), 'ratio_L2_median': float(np.median(r['r2'])),
+                     'ratio_L3_median': float(np.median(r['r3'])), 'ratio_lemma_median': float(np.median(r['rlem'])),
+                     'ratio_firstorder_median': float(np.median(r['rfo']))})
+    allr = {k_: np.concatenate([np.asarray(r[k_]) for r in acc.values()]) for k_ in ('r1', 'r2', 'r3', 'rlem', 'rfo')}
+    res = {'config': vars(a), 'violations_rel': viol, 'beta': beta, 'rows': rows,
+           'ratio_quantiles': {k_: {qq: float(np.quantile(v_, qq)) for qq in (0.05, 0.25, 0.5, 0.75, 0.95, 1.0)} for k_, v_ in allr.items()},
+           'frob': {f"{s_} {m_} {k_}": {'max_over_frob_prompt_median': float(np.median([f_['max_over_frob_prompt'] for f_ in frob if (f_['setting'], f_['method'], f_['kind']) == (s_, m_, k_)])),
+                                         'cont_over_prompt_rms_median': float(np.median([f_['cont_over_prompt_rms'] for f_ in frob if (f_['setting'], f_['method'], f_['kind']) == (s_, m_, k_)]))}
+                    for s_, _, _ in SETTINGS for m_ in METHODS for k_ in 'KV'}}
+    x = [r_['L2_mean'] for r_ in rows]; y = [r_['ppl'] for r_ in rows]
+    res['spearman'] = {'L2_vs_ppl': spearman(x, y), 'err_vs_ppl': spearman([r_['err_mean'] for r_ in rows], y),
+                       'L3_vs_ppl': spearman([r_['L3_mean'] for r_ in rows], y)}
+    res['decision'] = {'B1_all_hold': all(v_ <= 1e-9 for v_ in viol.values()),
+                       'B2_L2_within_10x': res['ratio_quantiles']['r2'][0.5] >= 0.1,
+                       'B3_spearman_ge_0.8': res['spearman']['L2_vs_ppl'] >= 0.8}
+    res['total_runtime_s'] = time.perf_counter() - T0
+    with open(a.out, 'w') as f:
+        json.dump(res, f, indent=1)
+    print(json.dumps({k_: res[k_] for k_ in ('violations_rel', 'ratio_quantiles', 'spearman', 'decision')}, indent=1))
+    for r_ in rows:
+        print(r_)
+    make_figures(a, res)
+
+
+def make_figures(a, res):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import dataviz_style as dv
+    dv.apply()
+    fig, ax = plt.subplots(1, 2, figsize=(7.0, 2.9))
+    q = res['ratio_quantiles']
+    labs = [('rfo', 'softmax\nfirst order'), ('rlem', 'softmax\nLemma'), ('r1', 'level 1'), ('r2', 'level 2'), ('r3', 'level 3')]
+    for i, (k, lab) in enumerate(labs):
+        ax[0].plot([i, i], [q[k]['0.05'] if '0.05' in q[k] else q[k][0.05], q[k]['0.95'] if '0.95' in q[k] else q[k][0.95]], color=dv.C['blue'], lw=1)
+        lo, hi = (q[k].get('0.25', q[k].get(0.25)), q[k].get('0.75', q[k].get(0.75)))
+        ax[0].plot([i, i], [lo, hi], color=dv.C['blue'], lw=5, solid_capstyle='butt')
+        ax[0].plot(i, q[k].get('0.5', q[k].get(0.5)), 'o', color=dv.C['orange'], ms=4)
+    ax[0].set_yscale('log'); ax[0].axhline(1, color='gray', lw=0.8)
+    ax[0].set_xticks(range(len(labs))); ax[0].set_xticklabels([l_ for _, l_ in labs], fontsize=7)
+    ax[0].set_ylabel('actual / bound'); ax[0].set_title('(a) tightness (1 = exact)')
+    cols = {'offline': dv.C['black'], 'online': dv.C['blue'], 'rsvd q=0': dv.C['yellow'], 'rsvd q=1': dv.C['orange'], 'rsvd q=2': dv.C['aqua']}
+    for r in res['rows']:
+        mk = 'o' if r['setting'] == 'half' else 's'
+        ax[1].plot(r['L2_mean'], r['ppl'], mk, color=cols[r['method']], ms=5, mfc='none' if r['setting'] == 'third' else cols[r['method']])
+    for m, c in cols.items():
+        ax[1].plot([], [], 'o', color=c, label=m)
+    ax[1].plot([], [], 'o', color='gray', label='half cache'); ax[1].plot([], [], 's', color='gray', mfc='none', label='third')
+    ax[1].set_xlabel('level-2 bound (sum over layers, heads)'); ax[1].set_ylabel('perplexity (continuation)')
+    ax[1].set_title(f"(b) bound vs. perplexity (Spearman {res['spearman']['L2_vs_ppl']:.2f})")
+    ax[1].legend(frameon=False, fontsize=6)
+    fig.tight_layout()
+    for ext, kw in (('pdf', {}), ('png', {'dpi': 200})):
+        fig.savefig(os.path.join(a.figdir, f'fig15_kv_bound.{ext}'), bbox_inches='tight', **kw)
+    plt.close(fig)
+
+
+if __name__ == '__main__':
+    main()

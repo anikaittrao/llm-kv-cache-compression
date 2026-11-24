@@ -1,0 +1,83 @@
+{
+ "config": {
+  "windows": 16,
+  "threads": 4,
+  "figdir": "<project>\\figures",
+  "out": "<project>\\experiments\\results_kv_buffer.json",
+  "replot": false
+ },
+ "torch": "2.15.0+cpu",
+ "hardware": {
+  "platform": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+  "threads": 4
+ },
+ "settings": {
+  "KV 256/512 P=768": {
+   "P": 768,
+   "RK": 256,
+   "RV": 512,
+   "cache_frac": 0.5,
+   "tokens": 4080,
+   "ppl": {
+    "dense": 24.727416643689267,
+    "static / no buffer": 25.775281269132424,
+    "static / buffer B=8": 25.25057103405122,
+    "static / buffer B=16": 25.110629487263523,
+    "static / buffer B=32": 24.996817238976632,
+    "static / buffer B=64": 24.923292505777848,
+    "static / buffer B=128": 24.841685143762525,
+    "update / no buffer": 25.36507206375544,
+    "update / buffer B=32": 24.77795485092982,
+    "offline / no buffer": 25.367907180655404,
+    "offline / buffer B=32": 25.022129101730375
+   },
+   "excess": {
+    "dense": 0.0,
+    "static / no buffer": 0.04237663159651506,
+    "static / buffer B=8": 0.021156855885932968,
+    "static / buffer B=16": 0.015497488035089768,
+    "static / buffer B=32": 0.01089481360585709,
+    "static / buffer B=64": 0.007921404201298499,
+    "static / buffer B=128": 0.004621125680851046,
+    "update / no buffer": 0.02578738528389346,
+    "update / buffer B=32": 0.002043812662227751,
+    "offline / no buffer": 0.025902040079451627,
+    "offline / buffer B=32": 0.011918449156568922
+   }
+  },
+  "K 256 P=384": {
+   "P": 384,
+   "RK": 256,
+   "RV": null,
+   "cache_frac": 0.6666666666666666,
+   "tokens": 10224,
+   "ppl": {
+    "dense": 26.70191914624331,
+    "static / no buffer": 29.314052866493043,
+    "static / buffer B=32": 27.91635507008224,
+    "update / no buffer": 27.225395603076176,
+    "update / buffer B=32": 26.755167025179073
+   },
+   "excess": {
+    "dense": 0.0,
+    "static / no buffer": 0.09782569207641512,
+    "static / buffer B=32": 0.045481222424036405,
+    "update / no buffer": 0.019604450675093643,
+    "update / buffer B=32": 0.0019941592454135737
+   }
+  }
+ },
+ "decision": {
+  "F1_update_alone_halves_excess": false,
+  "F2_buffer_alone_halves_excess": true,
+  "F3_complementary": true,
+  "F4_buffer_size_monotone": true
+ },
+ "secondary_P384": {
+  "F1_update_alone_halves_excess": true,
+  "F2_buffer_alone_halves_excess": true,
+  "F3_complementary": true
+ },
+ "total_runtime_s": 7090.714502800023
+}

@@ -1,0 +1,245 @@
+{
+ "kv_buffer": {
+  "windows": [
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31
+  ],
+  "ppl": {
+   "dense": 24.932320380476064,
+   "static / no buffer": 25.792611117361528,
+   "static / buffer B=8": 25.364359690617356,
+   "static / buffer B=16": 25.27492881159851,
+   "static / buffer B=32": 25.142063926880546,
+   "static / buffer B=64": 25.02374033663713,
+   "static / buffer B=128": 24.950630512659693,
+   "update / no buffer": 25.535081264630247,
+   "update / buffer B=32": 24.98378215237398,
+   "offline / no buffer": 25.555550746930034,
+   "offline / buffer B=32": 25.213719213417782
+  },
+  "excess": {
+   "dense": 0.0,
+   "static / no buffer": 0.034505040997272696,
+   "static / buffer B=8": 0.017328483813308093,
+   "static / buffer B=16": 0.013741538127784336,
+   "static / buffer B=32": 0.008412516091712341,
+   "static / buffer B=64": 0.0036667247478761045,
+   "static / buffer B=128": 0.0007343934260513052,
+   "update / no buffer": 0.024175883951266464,
+   "update / buffer B=32": 0.002064058664119184,
+   "offline / no buffer": 0.024996885847095474,
+   "offline / buffer B=32": 0.011286507980303062
+  },
+  "excess_ci": {
+   "static / no buffer": {
+    "excess": 0.03450504099727181,
+    "ci_lo": 0.02364592980604452,
+    "ci_hi": 0.047183942738102,
+    "windows": 16
+   },
+   "static / buffer B=8": {
+    "excess": 0.017328483813307427,
+    "ci_lo": 0.009005963940320605,
+    "ci_hi": 0.026923115859711633,
+    "windows": 16
+   },
+   "static / buffer B=16": {
+    "excess": 0.01374153812778367,
+    "ci_lo": 0.00831856421444721,
+    "ci_hi": 0.019645893961267147,
+    "windows": 16
+   },
+   "static / buffer B=32": {
+    "excess": 0.008412516091711453,
+    "ci_lo": 0.003887751860650157,
+    "ci_hi": 0.013687258163604055,
+    "windows": 16
+   },
+   "static / buffer B=64": {
+    "excess": 0.0036667247478763265,
+    "ci_lo": -5.247496757365688e-05,
+    "ci_hi": 0.008024004407975127,
+    "windows": 16
+   },
+   "static / buffer B=128": {
+    "excess": 0.0007343934260506391,
+    "ci_lo": -0.0021197973360662647,
+    "ci_hi": 0.0034702793269441035,
+    "windows": 16
+   },
+   "update / no buffer": {
+    "excess": 0.02417588395126602,
+    "ci_lo": 0.016641594655600667,
+    "ci_hi": 0.03257012263878689,
+    "windows": 16
+   },
+   "update / buffer B=32": {
+    "excess": 0.002064058664119406,
+    "ci_lo": 0.0006691195416894669,
+    "ci_hi": 0.0034443044257912447,
+    "windows": 16
+   },
+   "offline / no buffer": {
+    "excess": 0.02499688584709525,
+    "ci_lo": 0.017081138093165693,
+    "ci_hi": 0.03312676264314973,
+    "windows": 16
+   },
+   "offline / buffer B=32": {
+    "excess": 0.011286507980303284,
+    "ci_lo": 0.005744099094978861,
+    "ci_hi": 0.016996012355406487,
+    "windows": 16
+   }
+  },
+  "both_over_buffer_only": {
+   "ratio": 0.9937045035377023,
+   "ci_lo": 0.9892041399493386,
+   "ci_hi": 0.9977303399960112,
+   "windows": 16,
+   "windows_won": 13,
+   "ties": 0,
+   "sign_p": 0.021270751953125
+  },
+  "pairs": {
+   "update / no buffer | static / no buffer": {
+    "ratio": 0.9900153632542492,
+    "ci_lo": 0.9833711751617833,
+    "ci_hi": 0.9960421740959925,
+    "windows": 16,
+    "windows_won": 12,
+    "ties": 0,
+    "sign_p": 0.076812744140625
+   },
+   "static / buffer B=32 | static / no buffer": {
+    "ratio": 0.9747777692021616,
+    "ci_lo": 0.9648979053868016,
+    "ci_hi": 0.9836182772822232,
+    "windows": 16,
+    "windows_won": 15,
+    "ties": 0,
+    "sign_p": 0.000518798828125
+   },
+   "update / buffer B=32 | update / no buffer": {
+    "ratio": 0.978410128930356,
+    "ci_lo": 0.9706802125434274,
+    "ci_hi": 0.9856566088709058,
+    "windows": 16,
+    "windows_won": 16,
+    "ties": 0,
+    "sign_p": 3.0517578125e-05
+   },
+   "offline / buffer B=32 | static / buffer B=32": {
+    "ratio": 1.0028500160824367,
+    "ci_lo": 0.9965789709553082,
+    "ci_hi": 1.0092398657065444,
+    "windows": 16,
+    "windows_won": 6,
+    "ties": 0,
+    "sign_p": 0.454498291015625
+   }
+  }
+ },
+ "decision": {
+  "Q1_both_le_0.5pct": true,
+  "Q2_order": true,
+  "Q3_both_over_buffer_CI_below_1": true
+ },
+ "kv_update_Q4": {
+  "update decay | update": {
+   "ratio": 0.9993508764539384,
+   "ci_lo": 0.9988023430385374,
+   "ci_hi": 0.9999296124394287,
+   "windows": 16,
+   "windows_won": 12,
+   "ties": 0,
+   "sign_p": 0.076812744140625
+  },
+  "update no-reproj | update": {
+   "ratio": 0.9997812147988038,
+   "ci_lo": 0.9994273784355463,
+   "ci_hi": 1.000140990632236,
+   "windows": 16,
+   "windows_won": 9,
+   "ties": 0,
+   "sign_p": 0.803619384765625
+  },
+  "oracle refit | update": {
+   "ratio": 0.9997846810014764,
+   "ci_lo": 0.9991077929014126,
+   "ci_hi": 1.0004156495251901,
+   "windows": 16,
+   "windows_won": 7,
+   "ties": 0,
+   "sign_p": 0.803619384765625
+  },
+  "rsvd q=1 + update | update": {
+   "ratio": 0.9999105835483415,
+   "ci_lo": 0.9989123052627956,
+   "ci_hi": 1.0008699630828422,
+   "windows": 16,
+   "windows_won": 8,
+   "ties": 0,
+   "sign_p": 1.0
+  }
+ },
+ "kv_update_ppl": {
+  "dense": 24.932320380476064,
+  "update": 24.98378215237398,
+  "update decay": 24.967564591109227,
+  "update no-reproj": 24.978316070569157,
+  "rsvd q=1 + update": 24.98154819122493,
+  "oracle refit": 24.978402669421612
+ },
+ "kv_attnbasis_Q4": {
+  "attn-late / no buffer | online / no buffer": {
+   "ratio": 0.9986809879706147,
+   "ci_lo": 0.9959795995983559,
+   "ci_hi": 1.001336548370346,
+   "windows": 16,
+   "windows_won": 10,
+   "ties": 0,
+   "sign_p": 0.454498291015625
+  },
+  "attn-late / buffer | online / buffer": {
+   "ratio": 0.9995612500324463,
+   "ci_lo": 0.9978590690748621,
+   "ci_hi": 1.0009475263903844,
+   "windows": 16,
+   "windows_won": 8,
+   "ties": 0,
+   "sign_p": 1.0
+  }
+ },
+ "kv_attnbasis_ppl": {
+  "dense": 24.932320380476064,
+  "offline / no buffer": 25.555550746930034,
+  "online / no buffer": 25.792611117361528,
+  "attn-late / no buffer": 25.75859035302844,
+  "online / buffer": 25.142063926880546,
+  "attn-late / buffer": 25.13103284714838
+ },
+ "C1b_offline_skip0_windows_0_15": {
+  "ppl": {
+   "dense": 24.727416643689267,
+   "offline / no buffer": 25.371450483724246,
+   "offline / buffer B=32": 25.030902120201436
+  },
+  "reported_offline_no_buffer": 25.368,
+  "reported_offline_buffer32": 25.022
+ }
+}

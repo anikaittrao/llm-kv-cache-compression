@@ -1,0 +1,99 @@
+{
+ "code_check_dense_max_abs_nll_diff": 0.0,
+ "stored_numbers_per_token_layer_head": {
+  "layer": 192,
+  "head": 192
+ },
+ "basis_numbers_per_layer": {
+  "layer": 36864,
+  "head": 12288
+ },
+ "cells": {
+  "static / buffer 32": {
+   "rule": "PH1",
+   "e_layer": 0.05333804641834061,
+   "e_head": 0.18152550827566216,
+   "e_layer_ci": {
+    "point": 0.05333804641834061,
+    "ci_lo": 0.044280672886443544,
+    "ci_hi": 0.06178494124529266,
+    "windows": 8
+   },
+   "e_head_ci": {
+    "point": 0.18152550827566216,
+    "ci_lo": 0.1419086972958176,
+    "ci_hi": 0.22939850645613394,
+    "windows": 8
+   },
+   "ppl_ratio_head_over_layer": {
+    "ratio": 1.1216964129352365,
+    "ci_lo": 1.0847369405674103,
+    "ci_hi": 1.1654238470874183,
+    "windows_won": 0,
+    "windows": 8,
+    "sign_p": 0.0078125
+   },
+   "per_layer_better": true,
+   "per_head_better": false
+  },
+  "update / buffer 32": {
+   "rule": "PH2",
+   "e_layer": 0.04598592527853351,
+   "e_head": 0.18139161829948303,
+   "e_layer_ci": {
+    "point": 0.04598592527853351,
+    "ci_lo": 0.038423291916405186,
+    "ci_hi": 0.05363061816460246,
+    "windows": 8
+   },
+   "e_head_ci": {
+    "point": 0.18139161829948303,
+    "ci_lo": 0.14148572505299706,
+    "ci_hi": 0.2290052090512793,
+    "windows": 8
+   },
+   "ppl_ratio_head_over_layer": {
+    "ratio": 1.1294526912347245,
+    "ci_lo": 1.0908463376440725,
+    "ci_hi": 1.1742837563008388,
+    "windows_won": 0,
+    "windows": 8,
+    "sign_p": 0.0078125
+   },
+   "per_layer_better": true,
+   "per_head_better": false
+  },
+  "static / no buffer": {
+   "rule": "PH3",
+   "e_layer": 0.16488127644779937,
+   "e_head": 0.5695908253429123,
+   "e_layer_ci": {
+    "point": 0.16488127644779937,
+    "ci_lo": 0.14297880465601565,
+    "ci_hi": 0.18832644076477534,
+    "windows": 8
+   },
+   "e_head_ci": {
+    "point": 0.5695908253429123,
+    "ci_lo": 0.45982179236016135,
+    "ci_hi": 0.6807094564837113,
+    "windows": 8
+   },
+   "ppl_ratio_head_over_layer": {
+    "ratio": 1.3474255763894138,
+    "ci_lo": 1.270285024649361,
+    "ci_hi": 1.4232566234118151,
+    "windows_won": 0,
+    "windows": 8,
+    "sign_p": 0.0078125
+   },
+   "per_layer_better": true,
+   "per_head_better": false
+  }
+ },
+ "verdict": {
+  "static / buffer 32": "per-layer better",
+  "update / buffer 32": "per-layer better",
+  "static / no buffer": "per-layer better"
+ }
+}

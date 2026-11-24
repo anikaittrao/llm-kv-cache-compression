@@ -1,0 +1,150 @@
+{
+ "config": {
+  "windows": 16,
+  "layers": 12,
+  "stride": 8,
+  "P": 768,
+  "p": 10,
+  "threads": 4,
+  "out": "experiments\\rerun_2026-11-22\\c9_kv_proxy.json",
+  "online_json": "<project>\\experiments\\results_kv_online.json"
+ },
+ "rows": [
+  {
+   "setting": "half",
+   "method": "offline",
+   "ppl": 25.36790877395218,
+   "err": 155.1795632793759,
+   "res_all": 83.66124716808116,
+   "res_cont": 83.96297568983043,
+   "res_sq": 435.1523152542254,
+   "attn_val": 299.83106481215185,
+   "attn_score": 12.756155279332845
+  },
+  {
+   "setting": "half",
+   "method": "online",
+   "ppl": 25.775278687821356,
+   "err": 162.0193143942529,
+   "res_all": 49.970524060673526,
+   "res_cont": 104.27220525380879,
+   "res_sq": 219.10062771294997,
+   "attn_val": 275.01821534908817,
+   "attn_score": 14.850330652978107
+  },
+  {
+   "setting": "half",
+   "method": "rsvd q=0",
+   "ppl": 26.521884448762943,
+   "err": 208.67872232153096,
+   "res_all": 84.6162077639849,
+   "res_cont": 136.42681853197385,
+   "res_sq": 491.3642465294307,
+   "attn_val": 395.69803574289426,
+   "attn_score": 20.349244597792705
+  },
+  {
+   "setting": "half",
+   "method": "rsvd q=1",
+   "ppl": 25.80358923981256,
+   "err": 164.30785787568183,
+   "res_all": 52.23125979322872,
+   "res_cont": 106.56876364536697,
+   "res_sq": 234.27311248130687,
+   "attn_val": 279.0063184736883,
+   "attn_score": 15.208828936158072
+  },
+  {
+   "setting": "half",
+   "method": "rsvd q=2",
+   "ppl": 25.74724981392076,
+   "err": 162.60300065306777,
+   "res_all": 50.57735518340378,
+   "res_cont": 104.8378761907399,
+   "res_sq": 223.0676305285837,
+   "attn_val": 275.6983987331955,
+   "attn_score": 14.951155532585668
+  },
+  {
+   "setting": "third",
+   "method": "offline",
+   "ppl": 28.654632457625496,
+   "err": 256.4021476509253,
+   "res_all": 173.6342041086158,
+   "res_cont": 174.36879655366806,
+   "res_sq": 1815.3582087584696,
+   "attn_val": 471.578010344817,
+   "attn_score": 27.34272955514378
+  },
+  {
+   "setting": "third",
+   "method": "online",
+   "ppl": 28.33975232642012,
+   "err": 237.89502083341927,
+   "res_all": 116.16673832073442,
+   "res_cont": 198.07404414683666,
+   "res_sq": 951.6120917492746,
+   "attn_val": 400.6149094771919,
+   "attn_score": 30.55948302951951
+  },
+  {
+   "setting": "third",
+   "method": "rsvd q=0",
+   "ppl": 31.822227216950274,
+   "err": 307.868048215441,
+   "res_all": 187.37303571624824,
+   "res_cont": 264.31449738358464,
+   "res_sq": 2137.707369160408,
+   "attn_val": 555.5466623470663,
+   "attn_score": 45.44887903887945
+  },
+  {
+   "setting": "third",
+   "method": "rsvd q=1",
+   "ppl": 28.468945036477372,
+   "err": 241.68023627442867,
+   "res_all": 121.44185472966365,
+   "res_cont": 202.69968239561652,
+   "res_sq": 1022.7784351809113,
+   "attn_val": 407.339330218928,
+   "attn_score": 31.535448375965927
+  },
+  {
+   "setting": "third",
+   "method": "rsvd q=2",
+   "ppl": 28.414011959020957,
+   "err": 238.81992408449165,
+   "res_all": 117.63720817106977,
+   "res_cont": 199.40334720666704,
+   "res_sq": 971.4450904961396,
+   "attn_val": 402.04894424735966,
+   "attn_score": 30.886374297052885
+  }
+ ],
+ "spearman": {
+  "err": 0.9878787878787878,
+  "res_all": 0.9151515151515152,
+  "res_cont": 0.9151515151515152,
+  "res_sq": 0.9151515151515152,
+  "attn_val": 0.9151515151515152,
+  "attn_score": 0.9151515151515152
+ },
+ "offline_vs_online_half_order_right": {
+  "err": true,
+  "res_all": false,
+  "res_cont": true,
+  "res_sq": false,
+  "attn_val": false,
+  "attn_score": true
+ },
+ "reported_bound_spearman": {
+  "level 2 (kv_bound)": 0.9151515151515152,
+  "level 2' (kv_bound2)": 0.9151515151515152,
+  "level V (kv_bound3)": 0.9878787878787878,
+  "actual err": 0.9878787878787878
+ },
+ "decision": {
+  "proxies_with_spearman_ge_0.98": []
+ },
+ "total_runtime_s": 932.3777920999855
+}
